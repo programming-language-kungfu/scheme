@@ -48,6 +48,12 @@ parseDottedList = do
   tails <- char '.' >> spaces >> parseExpr
   return DottedList head tail
 
+parseQuoted :: Parser LispVal
+parseQuoted = do
+  char '\''
+  x <- parseExpr
+  return $ List [Atom "quote", x]
+
 readExpr :: String -> String
 readExpr input = case parse parseExpr "lisp" input of
     Left err -> "No match: " ++ show err
