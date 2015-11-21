@@ -39,6 +39,15 @@ parseNumber = liftM (Number . read) $ many1 digit
 parseExpr :: Parser LispVal
 parseExpr = parseAtom <|> parseString <|> parseNumber
 
+parseList :: Parser LispVal
+parseList = liftM List $ sepBy parseExpr spaces
+
+parseDottedList :: Parser LispVal
+parseDottedList = do
+  head  <- endBy parseExpr spaces
+  tails <- char '.' >> spaces >> parseExpr
+  return DottedList head tail
+
 readExpr :: String -> String
 readExpr input = case parse parseExpr "lisp" input of
     Left err -> "No match: " ++ show err
