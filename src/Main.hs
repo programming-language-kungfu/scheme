@@ -1,7 +1,13 @@
 module Main where
-import System.Environment
-import Parser
+
 import Eval
+import Error
+import SchemeParser
+import System.Environment
+import Control.Monad
 
 main :: IO()
-main = getArgs >>= print . eval . readExpr . head
+main = do
+  args <- getArgs
+  evaluatedValue <- return $ liftM show $ readExpr (args !! 0) >>= eval
+  putStrLn $ extractValue $ trapError evaluatedValue
